@@ -43,7 +43,6 @@ export const GET = async (request, context) => {
             : {
                   args: chromeArgs,
                   executablePath: await Chromium.executablePath(),
-                  ignoreHTTPSErrors: true,
                   headless: true,
               }),
     });
