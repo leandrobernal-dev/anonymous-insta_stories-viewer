@@ -3,6 +3,9 @@ import { createClient } from "@/utils/supabase/server";
 import puppeteer from "puppeteer";
 import Chromium from "@sparticuz/chromium-min";
 
+const chromiumPack =
+    "https://github.com/Sparticuz/chromium/releases/download/v127.0.0/chromium-v127.0.0-pack.tar";
+
 export const GET = async (request, context) => {
     const loginUrl = "https://www.instagram.com/accounts/login/";
     const username = context.params.username;
@@ -39,10 +42,10 @@ export const GET = async (request, context) => {
     // browser = await puppeteer.launch({ headless: true });
     browser = await puppeteer.launch({
         ...(isLocal
-            ? { channel: "chrome" }
+            ? { channel: "chrome", headless: true }
             : {
-                  args: chromeArgs,
-                  executablePath: await Chromium.executablePath(),
+                  args: Chromium.args,
+                  executablePath: await Chromium.executablePath(chromiumPack),
                   headless: true,
               }),
     });
