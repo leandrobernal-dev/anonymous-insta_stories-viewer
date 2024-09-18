@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
 import { createClient } from "@/utils/supabase/server";
 import puppeteer from "puppeteer";
+import Chromium from "@sparticuz/chromium-min";
 
 export const GET = async (request, context) => {
     const loginUrl = "https://www.instagram.com/accounts/login/";
@@ -15,8 +15,38 @@ export const GET = async (request, context) => {
     // Get browser cookies and localStorage from supabase
     const browserData = await getBroswerData();
 
+    let browser;
+    const isLocal = process.env.NODE_ENV === "development";
+    if (process.env.NODE_ENV === "development") {
+    }
+    Chromium.setHeadlessMode = true;
+    Chromium.setGraphicsMode = true;
+    const chromeArgs = [
+        "--font-render-hinting=none", // Improves font-rendering quality and spacing
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-gpu",
+        "--disable-dev-shm-usage",
+        "--disable-accelerated-2d-canvas",
+        "--disable-animations",
+        "--disable-background-timer-throttling",
+        "--disable-restore-session-state",
+        "--disable-web-security", // Only if necessary, be cautious with security implications
+        "--single-process", // Be cautious as this can affect stability in some environments
+    ];
+
     // Launch Puppeteer browser
-    const browser = await puppeteer.launch({ headless: true });
+    // browser = await puppeteer.launch({ headless: true });
+    browser = await puppeteer.launch({
+        ...(isLocal
+            ? { channel: "chrome" }
+            : {
+                  args: chromeArgs,
+                  executablePath: await Chromium.executablePath(),
+                  ignoreHTTPSErrors: true,
+                  headless: true,
+              }),
+    });
     const page = await browser.newPage();
 
     // Set cookies and localStorage from supabase
