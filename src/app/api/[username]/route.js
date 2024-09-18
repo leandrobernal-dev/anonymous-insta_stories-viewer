@@ -16,7 +16,7 @@ export const GET = async (request, context) => {
     const browserData = await getBroswerData();
 
     let browser;
-    const isLocal = process.env.NODE_ENV === "development";
+    const isLocal = process.env.DEPLOYMENT === "development";
     if (process.env.NODE_ENV === "development") {
     }
     Chromium.setHeadlessMode = true;
