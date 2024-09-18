@@ -24,19 +24,6 @@ export const GET = async (request, context) => {
     }
     Chromium.setHeadlessMode = true;
     Chromium.setGraphicsMode = true;
-    const chromeArgs = [
-        "--font-render-hinting=none", // Improves font-rendering quality and spacing
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-gpu",
-        "--disable-dev-shm-usage",
-        "--disable-accelerated-2d-canvas",
-        "--disable-animations",
-        "--disable-background-timer-throttling",
-        "--disable-restore-session-state",
-        "--disable-web-security", // Only if necessary, be cautious with security implications
-        "--single-process", // Be cautious as this can affect stability in some environments
-    ];
 
     // Launch Puppeteer browser
     // browser = await puppeteer.launch({ headless: true });
@@ -55,7 +42,7 @@ export const GET = async (request, context) => {
     const savedCookies = browserData[0].cookies;
     await page.setCookie(...savedCookies);
 
-    const savedLocalStorageData = browserData[0].localStorage;
+    const savedLocalStorageData = browserData[0].local_storages;
     await page.goto(loginUrl);
 
     await page.evaluate((localStorageData) => {
@@ -70,6 +57,7 @@ export const GET = async (request, context) => {
 
     // Login if not yet logged in
     if (!isLoggedIn) {
+        console.log("loggin in...");
         await page.goto(loginUrl);
         await page.waitForSelector("form", { visible: true });
 
@@ -79,7 +67,7 @@ export const GET = async (request, context) => {
         await page.click('button[type="submit"]');
 
         // Wait for login to complete
-        await delay(5000);
+        await delay(process.env.LOGIN_DELAY);
 
         // Save cookies
         const cookies = await page.cookies();
@@ -94,10 +82,12 @@ export const GET = async (request, context) => {
             return json;
         });
         await updateBrowserData({
-            cookies: JSON.stringify(cookies),
-            localStorage: JSON.stringify(localStorageData),
+            cookies: cookies,
+            localStorage: localStorageData,
         });
     }
+
+    console.log("logged in.");
 
     await page.goto(instaStoriesUrl);
 
@@ -148,22 +138,15 @@ const getBroswerData = async () => {
     return browserData;
 };
 const updateBrowserData = async ({ cookies, localStorage }) => {
+    const supabase = createClient();
+
     const { data, error } = await supabase
         .from("browser")
         .update({
             cookies: cookies,
             local_storage: localStorage,
         })
-        .eq(
-            "id",
-            (
-                await supabase
-                    .from("browser")
-                    .select("id")
-                    .order("id", { ascending: true })
-                    .limit(1)
-            ).single()
-        ).id;
+        .eq("id", 1);
 };
 
 function delay(time) {
