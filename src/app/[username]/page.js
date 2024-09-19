@@ -6,7 +6,6 @@ import Profile from "@/app/components/Profile";
 import ProfileSkeleton from "@/app/components/ProfileSkeleton";
 import { Separator } from "@/components/ui/separator";
 import axios from "axios";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 
 export default function Home({ params }) {
