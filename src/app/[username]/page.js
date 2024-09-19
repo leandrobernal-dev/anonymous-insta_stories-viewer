@@ -78,17 +78,6 @@ export default function Home({ params }) {
                 "header > section > ul > li:nth-child(3) > div > a > span > span"
             )?.textContent || "";
 
-        // console.log({
-        //     name,
-        //     profilePic,
-        //     pronoun,
-        //     descriptionHtml,
-        //     posts,
-        //     followers,
-        //     following,
-        //     hasStory,
-        //     isPrivate,
-        // });
         setProfileData({
             name,
             profilePic,
