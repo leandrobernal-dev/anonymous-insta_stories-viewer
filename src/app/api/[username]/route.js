@@ -6,21 +6,21 @@ import Chromium from "@sparticuz/chromium-min";
 
 const chromiumPack =
     "https://github.com/Sparticuz/chromium/releases/download/v127.0.0/chromium-v127.0.0-pack.tar";
+const loginUrl = "https://www.instagram.com/accounts/login/";
+const loginUsername = process.env.INSTA_USERNAME;
+const logingPass = process.env.INSTA_PASSWORD;
+const isLocal = process.env.DEPLOYMENT === "development";
 
 export const GET = async (request, context) => {
-    const loginUrl = "https://www.instagram.com/accounts/login/";
     const username = context.params.username;
+    const instaProfileUrl = "https://www.instagram.com/" + username + "/";
     const instaStoriesUrl =
         "https://www.instagram.com/stories/" + username + "/";
-
-    const loginUsername = process.env.INSTA_USERNAME;
-    const logingPass = process.env.INSTA_PASSWORD;
 
     // Get browser cookies and localStorage from supabase
     const browserData = await getBroswerData();
 
     let browser;
-    const isLocal = process.env.DEPLOYMENT === "development";
     if (process.env.NODE_ENV === "development") {
     }
     Chromium.setHeadlessMode = true;
@@ -90,44 +90,72 @@ export const GET = async (request, context) => {
 
     console.log("logged in.");
 
+    // Get Profile Details
+    await page.goto(instaProfileUrl);
+    await page.waitForSelector("header", { timeout: 5000 }); // Wait for DOM to load
+    const profileDetails = await page.evaluate(async () => {
+        // Find the specific element using querySelector
+        const profilePicElement = document.querySelector(
+            "header > section:nth-child(1) > div > div > span > img, header > section:nth-child(1) > div > div > a > img"
+        );
+        const profilePic = profilePicElement ? profilePicElement.src : "";
+        // Check if the profile picture's parent element is an anchor tag | anchor tag means no story available
+        const hasStory = profilePicElement?.parentElement.tagName === "SPAN";
+
+        const name = document.querySelector(
+            "header > section:nth-child(4) > div > div:first-child > span:first-child"
+        ).textContent;
+
+        const pronoun =
+            document.querySelector(
+                "header > section:nth-child(4) > div > div:first-child > span:nth-child(2)"
+            )?.textContent || "";
+
+        const description = document.querySelector(
+            "header > section:nth-child(4) > div > span > div"
+        );
+        const descriptionHtml = description ? description.innerHTML : "";
+
+        const posts = document.querySelector(
+            "header > section:nth-child(3) > ul > li:nth-child(1) > div > span > span"
+        ).textContent;
+
+        const followers = document.querySelector(
+            "header > section:nth-child(3) > ul > li:nth-child(2) > div > a > span > span"
+        ).textContent;
+
+        const following = document.querySelector(
+            "header > section:nth-child(3) > ul > li:nth-child(3) > div > a > span > span"
+        ).textContent;
+
+        return {
+            name,
+            profilePic,
+            pronoun,
+            descriptionHtml,
+            posts,
+            followers,
+            following,
+            hasStory,
+        };
+    });
+
+    // Return if no story
+    if (!profileDetails.hasStory) {
+        return NextResponse.json({ storyCount: 0, ...profileDetails });
+    }
+
+    // Get story count
     await page.goto(instaStoriesUrl);
-
-    // Check if a div contains the text "View story"
-    await page.locator("div ::-p-text(View story)").click();
-
-    // Wait for the story to load
-    // Intercept network requests to find the actual media (video/image) URLs
-    await page.setRequestInterception(true);
-    // Listen for all network requests
-    page.on("request", (request) => {
-        request.continue(); // Let the request proceed
+    const storyCount = await page.evaluate(() => {
+        // const parentElement = document.querySelector(".x1ned7t2.x78zum5");
+        const parentElement = document.querySelector(
+            "section > div:first-child > div > div > div:first-child > div > div:first-child > div"
+        );
+        return parentElement ? parentElement.childElementCount : 0;
     });
 
-    let mediaUrls = [];
-    let audioUrl = "";
-    let videoUrl = "";
-    // Listen for network responses (we're looking for XHR/Fetch ones)
-    page.on("response", async (response) => {
-        const requestUrl = response.url();
-        if (requestUrl.includes("https://scontent.cdninstagram.com")) {
-            mediaUrls.push(requestUrl.replace(/&bytestart.*$/, ""));
-
-            if (requestUrl.includes("video_dashinit")) {
-                videoUrl = requestUrl
-                    .replace(/\s+/g, "")
-                    .replace(/&bytestart.*$/, "");
-            } else {
-                audioUrl = requestUrl
-                    .replace(/\s+/g, "")
-                    .replace(/&bytestart.*$/, "");
-            }
-        }
-    });
-
-    await delay(300);
-    await page.close();
-
-    return NextResponse.json({ audioUrl, videoUrl });
+    return NextResponse.json({ storyCount, ...profileDetails });
 };
 
 const getBroswerData = async () => {
