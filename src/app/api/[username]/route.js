@@ -92,6 +92,16 @@ export const GET = async (request, context) => {
 
     // Get Profile Details
     await page.goto(instaProfileUrl);
+
+    // Check if profile exists
+    const isValid = (await page.content()).match(
+        "Sorry, this page isn't available."
+    );
+
+    if (isValid !== null) {
+        return NextResponse.json({ valid: false });
+    }
+
     await page.waitForSelector("header", { timeout: 5000 }); // Wait for DOM to load
     const profileDetails = await page.evaluate(async () => {
         const isPrivate = !![...document.querySelectorAll("span")].find(
