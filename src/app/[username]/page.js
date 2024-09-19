@@ -1,6 +1,7 @@
 "use client";
 
 import NotFound from "@/app/components/404Page";
+import LoadingPosts from "@/app/components/LoadingPosts";
 import Navbar from "@/app/components/Navbar";
 import Posts from "@/app/components/Posts";
 import PrivateAccountNotice from "@/app/components/PrivateAccountNotice";
@@ -46,11 +47,7 @@ export default function Home({ params }) {
                         {data?.isPrivate ? (
                             <PrivateAccountNotice />
                         ) : (
-                            <>
-                                {isLoading ? null : (
-                                    <Posts storyCount={data?.storyCount} />
-                                )}
-                            </>
+                            <>{isLoading ? <LoadingPosts /> : <Posts />}</>
                         )}
                     </div>
                 )}
