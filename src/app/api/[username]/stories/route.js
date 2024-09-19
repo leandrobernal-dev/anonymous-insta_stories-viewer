@@ -110,6 +110,10 @@ export const GET = async (request, context) => {
         request.continue(); // Let the request proceed
     });
 
+    // Close browser
+    page.close();
+    browser.close();
+
     return NextResponse.json({ username });
 
     // for (let i = 0; i < storyCount; i++) {
