@@ -102,9 +102,10 @@ export const GET = async (request, context) => {
         // Check if the profile picture's parent element is an anchor tag | anchor tag means no story available
         const hasStory = profilePicElement?.parentElement.tagName === "SPAN";
 
-        const name = document.querySelector(
-            "header > section:nth-child(4) > div > div:first-child > span:first-child"
-        ).textContent;
+        const name =
+            document.querySelector(
+                "header > section:nth-child(4) > div > div:first-child > span:first-child"
+            )?.textContent || "";
 
         const pronoun =
             document.querySelector(
@@ -116,17 +117,20 @@ export const GET = async (request, context) => {
         );
         const descriptionHtml = description ? description.innerHTML : "";
 
-        const posts = document.querySelector(
-            "header > section:nth-child(3) > ul > li:nth-child(1) > div > span > span"
-        ).textContent;
+        const posts =
+            document.querySelector(
+                "header > section:nth-child(3) > ul > li:nth-child(1) > div > span > span"
+            )?.textContent || "";
 
-        const followers = document.querySelector(
-            "header > section:nth-child(3) > ul > li:nth-child(2) > div > a > span > span"
-        ).textContent;
+        const followers =
+            document.querySelector(
+                "header > section:nth-child(3) > ul > li:nth-child(2) > div > a > span > span"
+            )?.textContent || "";
 
-        const following = document.querySelector(
-            "header > section:nth-child(3) > ul > li:nth-child(3) > div > a > span > span"
-        ).textContent;
+        const following =
+            document.querySelector(
+                "header > section:nth-child(3) > ul > li:nth-child(3) > div > a > span > span"
+            )?.textContent || "";
 
         return {
             name,
