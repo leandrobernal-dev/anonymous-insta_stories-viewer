@@ -157,25 +157,7 @@ export const GET = async (request, context) => {
         };
     });
 
-    // Return if no story
-    if (!profileDetails.hasStory) {
-        return NextResponse.json({ storyCount: 0, ...profileDetails });
-    }
-
-    // Get story count
-    await page.goto(instaStoriesUrl);
-    const storyCount = await page.evaluate(() => {
-        // const parentElement = document.querySelector(".x1ned7t2.x78zum5");
-        const parentElement = document.querySelector(
-            "section > div:first-child > div > div > div:first-child > div > div:first-child > div"
-        );
-        return parentElement ? parentElement.childElementCount : 0;
-    });
-
-    return NextResponse.json({ storyCount, ...profileDetails });
-};
-
-const getBroswerData = async () => {
+export const getBroswerData = async () => {
     const supabase = createClient();
     const { data: browserData, error } = await supabase
         .from("browser")
@@ -183,7 +165,7 @@ const getBroswerData = async () => {
 
     return browserData;
 };
-const updateBrowserData = async ({ cookies, localStorage }) => {
+export const updateBrowserData = async ({ cookies, localStorage }) => {
     const supabase = createClient();
 
     const { data, error } = await supabase
@@ -195,7 +177,7 @@ const updateBrowserData = async ({ cookies, localStorage }) => {
         .eq("id", 1);
 };
 
-function delay(time) {
+export function delay(time) {
     return new Promise(function (resolve) {
         setTimeout(resolve, time);
     });
