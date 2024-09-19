@@ -4,12 +4,13 @@ import { createClient } from "@/utils/supabase/server";
 import puppeteer from "puppeteer";
 import Chromium from "@sparticuz/chromium-min";
 
-const chromiumPack =
-    "https://github.com/Sparticuz/chromium/releases/download/v127.0.0/chromium-v127.0.0-pack.tar";
-const loginUrl = "https://www.instagram.com/accounts/login/";
-const loginUsername = process.env.INSTA_USERNAME;
-const logingPass = process.env.INSTA_PASSWORD;
-const isLocal = process.env.DEPLOYMENT === "development";
+import {
+    chromiumPack,
+    loginUrl,
+    loginUsername,
+    logingPass,
+    isLocal,
+} from "@/app/constants/constants";
 
 export const GET = async (request, context) => {
     const username = context.params.username;
@@ -43,6 +44,8 @@ export const GET = async (request, context) => {
     await page.setCookie(...savedCookies);
 
     const savedLocalStorageData = browserData[0].local_storages;
+
+    // Go to login page
     await page.goto(loginUrl);
 
     await page.evaluate((localStorageData) => {
