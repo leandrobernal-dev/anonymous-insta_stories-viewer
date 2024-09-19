@@ -20,7 +20,7 @@ export default function Home({ params }) {
         <main className="">
             <Navbar />
             <div className="flex justify-center">
-                <div className="w-[96%] max-w-4xl">
+                <div className="w-[92%] max-w-4xl">
                     <div>
                         <div className="mt-4">
                             {data && (
