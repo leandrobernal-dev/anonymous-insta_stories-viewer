@@ -18,7 +18,7 @@ export default function Profile({ data, params }) {
                                 />
                             </div>
                             {Number(data.storyCount) === 0 ? null : (
-                                <div className="absolute bottom-6 right-4 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center border-2 border-white">
+                                <div className="absolute bottom-4 right-4 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center border-2 border-white">
                                     <span className="text-white text-sm font-black">
                                         {data.storyCount}
                                     </span>
