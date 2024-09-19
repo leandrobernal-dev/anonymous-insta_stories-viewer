@@ -1,5 +1,6 @@
 "use client";
 
+import NotFound from "@/app/components/404Page";
 import Navbar from "@/app/components/Navbar";
 import PrivateAccountNotice from "@/app/components/PrivateAccountNotice";
 import Profile from "@/app/components/Profile";
@@ -9,29 +10,41 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 export default function Home({ params }) {
+    const [isValidUsername, setIsValidUsername] = useState(true);
+
     const [isLoading, setIsLoading] = useState(true);
     const [data, setData] = useState(null);
 
     useEffect(() => {
         axios.get(`/api/${params.username}`).then((data) => {
+            console.log(data.data);
             setIsLoading(false);
-            setData(data.data);
+
+            if (data.data.valid === false) {
+                setIsValidUsername(false);
+            } else {
+                setData(data.data);
+            }
         });
     }, []);
     return (
         <main className="">
             <Navbar />
             <div className="flex justify-center">
-                <div className="w-[92%] max-w-4xl">
-                    {isLoading ? (
-                        <ProfileSkeleton />
-                    ) : (
-                        <Profile data={data} params={params} />
-                    )}
+                {isValidUsername === false ? (
+                    <NotFound />
+                ) : (
+                    <div className="w-[92%] max-w-4xl">
+                        {!isLoading ? (
+                            <Profile data={data} params={params} />
+                        ) : (
+                            <ProfileSkeleton />
+                        )}
 
-                    <Separator className="my-8" />
-                    {data?.isPrivate ? <PrivateAccountNotice /> : null}
-                </div>
+                        <Separator className="my-8" />
+                        {data?.isPrivate ? <PrivateAccountNotice /> : null}
+                    </div>
+                )}
             </div>
         </main>
     );
