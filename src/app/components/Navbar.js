@@ -15,8 +15,8 @@ export default function Navbar() {
         }
     };
     return (
-        <nav className=" p-4">
-            <div className="container mx-auto flex items-center justify-between">
+        <nav className=" py-8">
+            <div className="container w-[92%] max-w-4xl mx-auto flex items-center justify-between">
                 <Link href="/" className="text-white text-2xl font-bold">
                     LOGO
                 </Link>
