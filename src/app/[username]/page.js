@@ -29,13 +29,18 @@ export default function Home({ params }) {
                             </div>
                             {data.storyCount && (
                                 <div className="absolute bottom-6 right-4 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center border-2 border-white">
-                                    <span className="text-white text-sm font-bold">
+                                    <span className="text-white text-sm font-black">
                                         {data.storyCount}
                                     </span>
                                 </div>
                             )}
                         </div>
                         <div className="mt-8">
+                            <div>
+                                <h1 className="text-3xl font-bold">
+                                    {params.username}
+                                </h1>
+                            </div>
                             <div className="flex gap-2">
                                 <span>
                                     <strong>{data.posts}</strong> posts
@@ -47,9 +52,14 @@ export default function Home({ params }) {
                                     <strong>{data.following}</strong> following
                                 </span>
                             </div>
-                            <h1>
-                                {data.name} <span>{data.pronoun}</span>
-                            </h1>
+                            <br />
+                            <span className="flex gap-2 items-center ">
+                                <h1 className="font-bold">{data.name} </h1>
+                                <span className="text-sm font-thin text-zinc-400">
+                                    {data.pronoun}
+                                </span>
+                            </span>
+                            <br />
                             <div
                                 dangerouslySetInnerHTML={{
                                     __html: data.descriptionHtml,
