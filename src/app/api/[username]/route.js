@@ -52,11 +52,10 @@ export const GET = async (request, context) => {
     }, savedLocalStorageData);
 
     // Check if logged in
-    const title = await page.title();
-    const isLoggedIn = !title.toLowerCase().includes("login");
+    const isLoggedIn = (await page.content()).match("Don't have an account?");
 
     // Login if not yet logged in
-    if (!isLoggedIn) {
+    if (isLoggedIn) {
         console.log("loggin in...");
         await page.goto(loginUrl);
         await page.waitForSelector("form", { visible: true });
