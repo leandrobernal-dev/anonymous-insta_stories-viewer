@@ -1,6 +1,7 @@
 "use client";
 
 import Navbar from "@/app/components/Navbar";
+import PrivateAccountNotice from "@/app/components/PrivateAccountNotice";
 import { Separator } from "@/components/ui/separator";
 import axios from "axios";
 import Image from "next/image";
