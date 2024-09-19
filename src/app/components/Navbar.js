@@ -4,7 +4,7 @@ import { Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-export default function Navbar() {
+export default function Navbar({ currentValue }) {
     const router = useRouter();
 
     const handleSubmit = (event) => {
@@ -25,7 +25,9 @@ export default function Navbar() {
                         name="username"
                         id="username"
                         type="text"
-                        placeholder="Enter username"
+                        placeholder={
+                            currentValue ? currentValue : "Enter username"
+                        }
                         className="bg-transparent text-white border-b border-white focus:outline-none focus:border-white pr-4 py-2"
                     />
                     <button>

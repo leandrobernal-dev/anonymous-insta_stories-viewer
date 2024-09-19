@@ -30,7 +30,7 @@ export default function Home({ params }) {
     }, []);
     return (
         <main className="">
-            <Navbar />
+            <Navbar currentValue={params.username} />
             <div className="flex justify-center">
                 {isValidUsername === false ? (
                     <NotFound />
