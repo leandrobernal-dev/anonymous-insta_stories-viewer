@@ -14,7 +14,6 @@ export default function Home({ params }) {
 
     useEffect(() => {
         axios.get(`/api/${params.username}`).then((data) => {
-            console.log(data.data);
             setIsLoading(false);
             setData(data.data);
         });
