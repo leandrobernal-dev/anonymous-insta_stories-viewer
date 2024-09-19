@@ -29,7 +29,10 @@ export default function Profile({ data, params }) {
                     <div className="mt-8">
                         <div>
                             <h1 className="text-3xl font-bold">
-                                {params.username}
+                                {params.username}{" "}
+                                <span className="text-sm font-thin text-zinc-400">
+                                    (Anonymous view)
+                                </span>
                             </h1>
                         </div>
                         <div className="flex gap-2 mt-2">
