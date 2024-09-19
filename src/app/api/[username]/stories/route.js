@@ -102,7 +102,6 @@ export const GET = async (request, context) => {
 
     // Click View Story Button if it exists
     await page.locator("div ::-p-text(View story)").click();
-    await page.screenshot({ path: "1.png" });
 
     // Intercept network requests to find the actual media (video/image) URLs
     await page.setRequestInterception(true);
