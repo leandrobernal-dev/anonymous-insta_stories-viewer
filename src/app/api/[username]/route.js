@@ -94,6 +94,10 @@ export const GET = async (request, context) => {
     await page.goto(instaProfileUrl);
     await page.waitForSelector("header", { timeout: 5000 }); // Wait for DOM to load
     const profileDetails = await page.evaluate(async () => {
+        const isPrivate = !![...document.querySelectorAll("span")].find(
+            (span) => span.textContent.includes("This account is private")
+        );
+
         // Find the specific element using querySelector
         const profilePicElement = document.querySelector(
             "header > section:nth-child(1) > div > div > span > img, header > section:nth-child(1) > div > div > a > img"
@@ -141,6 +145,7 @@ export const GET = async (request, context) => {
             followers,
             following,
             hasStory,
+            isPrivate,
         };
     });
 
