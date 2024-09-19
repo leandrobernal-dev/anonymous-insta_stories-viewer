@@ -2,6 +2,7 @@
 
 import NotFound from "@/app/components/404Page";
 import Navbar from "@/app/components/Navbar";
+import Posts from "@/app/components/Posts";
 import PrivateAccountNotice from "@/app/components/PrivateAccountNotice";
 import Profile from "@/app/components/Profile";
 import ProfileSkeleton from "@/app/components/ProfileSkeleton";
@@ -41,8 +42,16 @@ export default function Home({ params }) {
                             <ProfileSkeleton />
                         )}
 
-                        <Separator className="my-8" />
-                        {data?.isPrivate ? <PrivateAccountNotice /> : null}
+                        <Separator className="mt-8" />
+                        {data?.isPrivate ? (
+                            <PrivateAccountNotice />
+                        ) : (
+                            <>
+                                {isLoading ? null : (
+                                    <Posts storyCount={data?.storyCount} />
+                                )}
+                            </>
+                        )}
                     </div>
                 )}
             </div>
