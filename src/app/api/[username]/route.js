@@ -99,63 +99,15 @@ export const GET = async (request, context) => {
     if (isValid !== null) {
         return NextResponse.json({ valid: false });
     }
+    await page.waitForSelector("header", { timeout: 10000 }); // Wait for DOM to load
 
-    await page.waitForSelector("header", { timeout: 5000 }); // Wait for DOM to load
-    const profileDetails = await page.evaluate(async () => {
-        const isPrivate = !![...document.querySelectorAll("span")].find(
-            (span) => span.textContent.includes("This account is private")
-        );
-
-        // Find the specific element using querySelector
-        const profilePicElement = document.querySelector(
-            "header > section:nth-child(1) > div > div > span > img, header > section:nth-child(1) > div > div > a > img"
-        );
-        const profilePic = profilePicElement ? profilePicElement.src : "";
-        // Check if the profile picture's parent element is an anchor tag | anchor tag means no story available
-        const hasStory = profilePicElement?.parentElement.tagName === "SPAN";
-
-        const name =
-            document.querySelector(
-                "header > section:nth-child(4) > div > div:first-child > span:first-child"
-            )?.textContent || "";
-
-        const pronoun =
-            document.querySelector(
-                "header > section:nth-child(4) > div > div:first-child > span:nth-child(2)"
-            )?.textContent || "";
-
-        const description = document.querySelector(
-            "header > section:nth-child(4) > div > span > div"
-        );
-        const descriptionHtml = description ? description.innerHTML : "";
-
-        const posts =
-            document.querySelector(
-                "header > section:nth-child(3) > ul > li:nth-child(1) > div > span > span"
-            )?.textContent || "";
-
-        const followers =
-            document.querySelector(
-                "header > section:nth-child(3) > ul > li:nth-child(2) > div > a > span > span"
-            )?.textContent || "";
-
-        const following =
-            document.querySelector(
-                "header > section:nth-child(3) > ul > li:nth-child(3) > div > a > span > span"
-            )?.textContent || "";
-
-        return {
-            name,
-            profilePic,
-            pronoun,
-            descriptionHtml,
-            posts,
-            followers,
-            following,
-            hasStory,
-            isPrivate,
-        };
+    const mainEl = await page.evaluate(() => {
+        const main = document.querySelector("main");
+        return main.outerHTML;
     });
+
+    return NextResponse.json({ mainEl });
+};
 
 export const getBroswerData = async () => {
     const supabase = createClient();
