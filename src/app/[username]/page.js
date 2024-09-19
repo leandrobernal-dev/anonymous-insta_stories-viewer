@@ -14,10 +14,11 @@ export default function Home({ params }) {
     }, []);
     return (
         <main>
-            <div className="flex w-full justify-center">
+            <Navbar />
+            <div className="flex w-full justify-center mt-4">
                 {data && (
                     <div className="flex gap-8">
-                        <div className="w-64 relative h-64 aspect-square p-1 rounded-full bg-gradient-to-br from-yellow-400 via-red-500 to-purple-600">
+                        <div className="w-52 relative h-52 aspect-square p-1 rounded-full bg-gradient-to-br from-yellow-400 via-red-500 to-purple-600">
                             <div className="w-full h-full rounded-full overflow-hidden">
                                 <Image
                                     src={data.profilePic}
@@ -41,7 +42,7 @@ export default function Home({ params }) {
                                     {params.username}
                                 </h1>
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex gap-2 mt-2">
                                 <span>
                                     <strong>{data.posts}</strong> posts
                                 </span>
