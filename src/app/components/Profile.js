@@ -9,6 +9,7 @@ export default function Profile({ data, params }) {
                         <div className="w-52 relative h-52 aspect-square p-1 rounded-full bg-gradient-to-br from-yellow-400 via-red-500 to-purple-600">
                             <div className="w-full h-full rounded-full overflow-hidden">
                                 <Image
+                                    quality={100}
                                     src={data.profilePic}
                                     alt=""
                                     width={200}
