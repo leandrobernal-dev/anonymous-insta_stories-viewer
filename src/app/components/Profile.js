@@ -10,6 +10,7 @@ export default function Profile({ data, params }) {
                             <div className="w-full h-full rounded-full overflow-hidden">
                                 <Image
                                     quality={100}
+                                    priority
                                     src={data.profilePic}
                                     alt=""
                                     width={200}
