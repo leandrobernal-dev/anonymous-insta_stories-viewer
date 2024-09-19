@@ -86,7 +86,8 @@ export default function Home({ params }) {
                                 </header>
                             )}
                         </div>
-                        <Separator />
+                        <Separator className="my-8" />
+                        {data?.isPrivate ? <PrivateAccountNotice /> : null}
                     </div>
                 </div>
             </div>
