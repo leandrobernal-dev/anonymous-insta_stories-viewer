@@ -100,6 +100,9 @@ export const GET = async (request, context) => {
     );
 
     if (isValid !== null) {
+        // Close browser
+        page.close();
+        browser.close();
         return NextResponse.json({ valid: false });
     }
     await page.waitForSelector("header", { timeout: 10000 }); // Wait for DOM to load
@@ -108,6 +111,10 @@ export const GET = async (request, context) => {
         const main = document.querySelector("main");
         return main.outerHTML;
     });
+
+    // Close browser
+    page.close();
+    browser.close();
 
     return NextResponse.json({ mainEl });
 };
