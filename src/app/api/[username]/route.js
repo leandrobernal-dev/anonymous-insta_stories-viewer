@@ -23,18 +23,17 @@ export const GET = async (request, context) => {
     let browser;
     if (process.env.NODE_ENV === "development") {
     }
-    Chromium.setHeadlessMode = true;
+    Chromium.setHeadlessMode = "shell";
     Chromium.setGraphicsMode = true;
 
     // Launch Puppeteer browser
-    // browser = await puppeteer.launch({ headless: true });
     browser = await puppeteer.launch({
         ...(isLocal
-            ? { channel: "chrome", headless: true }
+            ? { channel: "chrome", headless: "shell" }
             : {
                   args: Chromium.args,
                   executablePath: await Chromium.executablePath(chromiumPack),
-                  headless: true,
+                  headless: "shell",
               }),
     });
     const page = await browser.newPage();
