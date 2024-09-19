@@ -7,22 +7,22 @@ export default function NotFound() {
             <div className="mb-8">
                 <CloudSunIcon className="text-[#F9A826] text-6xl" />
             </div>
-            <h1 className="mb-2 text-6xl font-bold text-gray-800">404</h1>
-            <p className="mb-4 text-2xl font-light text-gray-600">
+            <h1 className="mb-2 text-6xl font-bold text-zinc-400">404</h1>
+            <p className="mb-4 text-2xl font-light text-zinc-600">
                 Page not found
             </p>
-            <p className="mb-8 text-lg text-gray-500">
+            <p className="mb-8 text-lg text-zinc-500">
                 Sorry, we couldn't find the page you're looking for.
             </p>
             <Link
-                href="#"
+                href="/"
                 className="mb-4 inline-block text-sm"
                 prefetch={false}
             >
                 <Button variant="default">Go back home</Button>
             </Link>
             <div className="mt-16">
-                <CatIcon className="text-gray-300 text-9xl" />
+                <CatIcon className="text-zinc-300 text-9xl" />
             </div>
         </div>
     );
