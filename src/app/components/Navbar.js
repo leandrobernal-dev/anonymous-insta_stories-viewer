@@ -26,7 +26,7 @@ export default function Navbar() {
                         id="username"
                         type="text"
                         placeholder="Enter username"
-                        className="bg-transparent text-white border-b border-white focus:outline-none focus:border-white pr-8 pr-4 py-2"
+                        className="bg-transparent text-white border-b border-white focus:outline-none focus:border-white pr-4 py-2"
                     />
                     <button>
                         <Search className="absolute right-0 top-1/2 transform -translate-y-1/2 text-white w-5 h-5" />
