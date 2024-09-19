@@ -64,7 +64,7 @@ export const GET = async (request, context) => {
     const isLoggedIn = (await page.content()).match("Don't have an account?");
 
     // Login if not yet logged in
-    if (!isLoggedIn) {
+    if (isLoggedIn) {
         console.log("loggin in...");
         await page.goto(loginUrl);
         await page.waitForSelector("form", { visible: true });
