@@ -91,31 +91,44 @@ export const GET = async (request, context) => {
 
     console.log("logged in.");
 
-    // Get Profile Details
+    // Go to the Instagram profile page
     await page.goto(instaProfileUrl);
 
-    // Check if profile exists
+    // Check if the profile exists (the 'Sorry, this page isn't available.' error message)
     const isValid = (await page.content()).match(
         "Sorry, this page isn't available."
     );
 
     if (isValid !== null) {
-        // Close browser
-        page.close();
-        browser.close();
+        // Close browser and return invalid profile response
+        await page.close();
+        await browser.close();
         return NextResponse.json({ valid: false });
     }
-    await page.waitForSelector("header", { timeout: 10000 }); // Wait for DOM to load
 
+    // Wait for the header to load (assuming this ensures the profile page is loaded)
+    try {
+        await page.waitForSelector("header", { timeout: 10000 }); // Wait for DOM to load (up to 10s)
+    } catch (error) {
+        // Timeout or element not found, meaning the page didn't load properly
+        await page.close();
+        await browser.close();
+        return NextResponse.json({
+            error: "Profile page did not load correctly",
+        });
+    }
+
+    // Extract the main element's outer HTML
     const mainEl = await page.evaluate(() => {
         const main = document.querySelector("main");
-        return main.outerHTML;
+        return main ? main.outerHTML : null;
     });
 
-    // Close browser
-    page.close();
-    browser.close();
+    // Close browser after successfully extracting data
+    await page.close();
+    await browser.close();
 
+    // Return the extracted data
     return NextResponse.json({ mainEl });
 };
 

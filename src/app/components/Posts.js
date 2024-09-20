@@ -1,15 +1,11 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
-import StorySkeleton from "@/app/components/StorySkeleton";
+import LoadingPosts from "@/app/components/LoadingPosts";
 
-export default function Posts({ storyCount, stories, posts }) {
+export default function Posts({ stories, posts, isLoadingStories }) {
     return (
         <div className="w-full max-w-3xl mx-auto   text-zinc-100">
-            <Tabs
-                defaultValue={storyCount > 0 ? "stories" : "posts"}
-                className="w-full"
-            >
+            <Tabs defaultValue="stories" className="w-full">
                 <TabsList className="grid w-full grid-cols-2 justify-center p-0 bg-transparent">
                     <TabsTrigger
                         value="stories"
@@ -25,55 +21,53 @@ export default function Posts({ storyCount, stories, posts }) {
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent value="stories" className="mt-8">
-                    {storyCount > 0 ? (
-                        <>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-1">
-                                {[...Array(4)].map((_, i) => (
-                                    <div
-                                        key={i}
-                                        className="flex flex-col items-center"
-                                    >
-                                        <StorySkeleton />
-                                        {/* <div className="w-full aspect-[9/16] overflow-hidden border-2 border-zinc-600">
-                                        <Image
-                                            src={`/placeholder.svg?height=64&width=64&text=S${
-                                                i + 1
-                                            }`}
-                                            alt={`Story ${i + 1}`}
-                                            width={64}
-                                            height={64}
-                                            className="object-cover"
-                                        />
-                                    </div> */}
-                                    </div>
-                                ))}
-                            </div>
-                        </>
+                    {isLoadingStories ? (
+                        <LoadingPosts />
                     ) : (
-                        <p className="text-center flex items-center font-black text-2xl justify-center w-full text-zinc-400 py-4">
-                            No Stories Available
-                        </p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-1">
+                            {stories.map((item, i) => {
+                                if (item.type === "video") {
+                                    return (
+                                        <div key={i} className="">
+                                            <video
+                                                src={item.videoUrl.replace(
+                                                    /&bytestart=\d+&byteend=\d+/,
+                                                    ""
+                                                )}
+                                                controls
+                                            ></video>
+                                            <audio
+                                                src={item.audioUrl.replace(
+                                                    /&bytestart=\d+&byteend=\d+/,
+                                                    ""
+                                                )}
+                                                controls
+                                            ></audio>
+                                        </div>
+                                    );
+                                } else {
+                                    return (
+                                        <div
+                                            key={i}
+                                            className="w-full aspect-[9/16] overflow-hidden border-2 border-zinc-600"
+                                        >
+                                            <Image
+                                                src={item.url}
+                                                alt={`Story ${i + 1}`}
+                                                priority
+                                                quality={100}
+                                                width={1080}
+                                                height={1920}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        </div>
+                                    );
+                                }
+                            })}
+                        </div>
                     )}
                 </TabsContent>
-                <TabsContent value="posts" className="mt-8">
-                    <div className="grid grid-cols-3 gap-1">
-                        {[...Array(9)].map((_, i) => (
-                            <Card key={i} className="bg-zinc-800 border-none">
-                                <CardContent className="p-0">
-                                    {/* <Image
-                                        src={`/placeholder.svg?height=300&width=300&text=Post ${
-                                            i + 1
-                                        }`}
-                                        alt={`Post ${i + 1}`}
-                                        width={300}
-                                        height={300}
-                                        className="object-cover aspect-square"
-                                    /> */}
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
-                </TabsContent>
+                <TabsContent value="posts" className="mt-8"></TabsContent>
             </Tabs>
         </div>
     );
