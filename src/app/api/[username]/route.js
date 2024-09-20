@@ -45,8 +45,8 @@ export const GET = async (request, context) => {
 
     const savedLocalStorageData = browserData[0].local_storages;
 
-    // Go to login page
-    await page.goto(loginUrl);
+    // Go to the Instagram profile page
+    await page.goto(instaProfileUrl);
 
     await page.evaluate((localStorageData) => {
         for (const key in localStorageData) {
@@ -54,7 +54,7 @@ export const GET = async (request, context) => {
         }
     }, savedLocalStorageData);
 
-    // Check if logged in
+    // Check redirected to login page
     const isLoggedIn = (await page.content()).match("Don't have an account?");
 
     // Login if not yet logged in
@@ -90,9 +90,6 @@ export const GET = async (request, context) => {
     }
 
     console.log("logged in.");
-
-    // Go to the Instagram profile page
-    await page.goto(instaProfileUrl);
 
     // Check if the profile exists (the 'Sorry, this page isn't available.' error message)
     const isValid = (await page.content()).match(
