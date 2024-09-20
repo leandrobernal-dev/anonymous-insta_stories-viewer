@@ -51,8 +51,8 @@ export const GET = async (request, context) => {
 
     const savedLocalStorageData = browserData[0].local_storages;
 
-    // Go to login page
-    await page.goto(loginUrl);
+    // Navigate to stories
+    await page.goto(instaStoriesUrl);
 
     await page.evaluate((localStorageData) => {
         for (const key in localStorageData) {
