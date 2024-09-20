@@ -15,10 +15,13 @@ export default function Home({ params }) {
     const [isValidUsername, setIsValidUsername] = useState(true);
 
     const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingStories, setIsLoadingStories] = useState(true);
 
     const [stringData, setStringData] = useState(null);
     const [profileData, setProfileData] = useState(null);
+    const [stories, setStories] = useState([]);
 
+    // Get scraped data
     useEffect(() => {
         axios.get(`/api/${params.username}`).then((data) => {
             setIsLoading(false);
@@ -31,6 +34,7 @@ export default function Home({ params }) {
         });
     }, []);
 
+    // Parse the string data
     useEffect(() => {
         if (stringData === null) return;
 
@@ -92,14 +96,15 @@ export default function Home({ params }) {
     }, [stringData]);
 
     useEffect(() => {
-        if (isLoading) return;
+        if (profileData === null || profileData.isPrivate) return;
 
-        // axios
-        //     .get(`/api/${params.username}/stories?count=${data?.storyCount}`)
-        //     .then((data) => {
-        //         console.log(data.data);
-        //     });
-    }, [isLoading]);
+        axios.get(`/api/${params.username}/stories`).then((data) => {
+            console.log(data.data);
+
+            setIsLoadingStories(false);
+            setStories(data.data);
+        });
+    }, [profileData]);
 
     return (
         <main className="">
@@ -119,7 +124,10 @@ export default function Home({ params }) {
                         {profileData?.isPrivate ? (
                             <PrivateAccountNotice />
                         ) : (
-                            <>{isLoading ? <LoadingPosts /> : <Posts />}</>
+                            <Posts
+                                stories={stories}
+                                isLoadingStories={isLoadingStories}
+                            />
                         )}
                     </div>
                 )}
