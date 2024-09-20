@@ -6,8 +6,8 @@ export default function Profile({ data, params }) {
             {data && (
                 <header className="sm:flex gap-8">
                     <div className="flex justify-center">
-                        <div className="w-52 relative h-52 aspect-square p-1 rounded-full bg-gradient-to-br from-yellow-400 via-red-500 to-purple-600">
-                            <div className="w-full h-full rounded-full overflow-hidden">
+                        <div className="w-52 relative h-52 aspect-square p-1 items-center rounded-full bg-gradient-to-br from-yellow-400 via-red-500 to-purple-600">
+                            <div className="w-full h-full rounded-full p-2 bg-black">
                                 <Image
                                     quality={100}
                                     priority
@@ -15,7 +15,7 @@ export default function Profile({ data, params }) {
                                     alt=""
                                     width={200}
                                     height={200}
-                                    className="w-full h-full object-cover"
+                                    className="w-full h-full rounded-full"
                                 />
                             </div>
                         </div>
