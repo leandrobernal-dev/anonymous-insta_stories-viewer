@@ -48,7 +48,6 @@ export const GET = async (request, context) => {
     // Set cookies and localStorage from supabase
     const savedCookies = browserData[0].cookies;
     await page.setCookie(...savedCookies);
-
     const savedLocalStorageData = browserData[0].local_storages;
 
     // Navigate to stories
@@ -97,12 +96,6 @@ export const GET = async (request, context) => {
 
     console.log("logged in.");
 
-    // Navigate to stories
-    await page.goto(instaStoriesUrl);
-
-    // Click View Story Button if it exists
-    await page.locator("div ::-p-text(View story)").click();
-
     // Intercept network requests to find the actual media (video/image) URLs
     await page.setRequestInterception(true);
     // Listen for all network requests
@@ -110,78 +103,87 @@ export const GET = async (request, context) => {
         request.continue(); // Let the request proceed
     });
 
-    // Close browser
-    page.close();
-    browser.close();
-
-    return NextResponse.json({ username });
-
-    // for (let i = 0; i < storyCount; i++) {
-    let mediaUrl = "";
-    const isVideo = await page.evaluate(() => {
-        // Select the parent div by its class
-        const parentDiv = document.querySelector(".x5yr21d.x1n2onr6.xh8yej3");
-
-        // If the parent div exists, check if there's an <img> inside (can be a nested child)
-        if (parentDiv) {
-            return parentDiv.querySelector("video") !== null;
-        }
-
-        return false;
-    });
-    console.log(storyCount, isVideo);
-    // page.on("response", async (response) => {
-    //     const requestUrl = response.url();
-    //     const isVideo = requestUrl.includes("bytestart");
-    //     console.log("isVideo: ", isVideo);
-
-    //     if (
-    //         requestUrl.includes("https://scontent.cdninstagram.com") &&
-    //         mediaUrl.length === 0
-    //     ) {
-    //         mediaUrl = requestUrl;
-    //     }
-    // });
-    // await page.screenshot({ path: i + ".png" });
-    // await page.keyboard.press("ArrowRight");
-    // }
-
-    // console.log(mediaUrl);
-
-    await delay(100);
-    await page.close();
-    return NextResponse.json({ storyCount });
-
-    // Intercept network requests to find the actual media (video/image) URLs
-    await page.setRequestInterception(true);
-    // Listen for all network requests
-    page.on("request", (request) => {
-        request.continue(); // Let the request proceed
+    const storiesCount = await page.evaluate(() => {
+        return document.querySelector(".x1ned7t2.x78zum5").children.length;
     });
 
-    let mediaUrls = [];
-    let audioUrl = "";
-    let videoUrl = "";
-    // Listen for network responses (we're looking for XHR/Fetch ones)
+    const videoUrls = new Map(); // Use a Map to ensure unique _nc_gid for videos
+    const audioUrls = new Map(); // Use a Map to ensure unique _nc_gid for audios
+
+    // Listen for all responses
     page.on("response", async (response) => {
-        const requestUrl = response.url();
-        if (requestUrl.includes("https://scontent.cdninstagram.com")) {
-            mediaUrls.push(requestUrl.replace(/&bytestart.*$/, ""));
+        const url = response.url();
+        const gid = extractGid(url); // Extract the _nc_gid
 
-            if (requestUrl.includes("video_dashinit")) {
-                videoUrl = requestUrl
-                    .replace(/\s+/g, "")
-                    .replace(/&bytestart.*$/, "");
-            } else {
-                audioUrl = requestUrl
-                    .replace(/\s+/g, "")
-                    .replace(/&bytestart.*$/, "");
+        if (gid) {
+            if (url.startsWith("https://scontent.cdninstagram.com/v/t66")) {
+                // Check if _nc_gid is already present
+                if (!videoUrls.has(gid)) {
+                    console.log(url);
+
+                    videoUrls.set(gid, url); // Add unique video URL by _nc_gid
+                }
+            } else if (
+                url.startsWith("https://scontent.cdninstagram.com/v/t50")
+            ) {
+                // Check if _nc_gid is already present
+                if (!audioUrls.has(gid)) {
+                    console.log(url);
+
+                    audioUrls.set(gid, url); // Add unique audio URL by _nc_gid
+                }
             }
         }
     });
 
-    await delay(300);
-    await page.close();
+    // Click View Story Button
+    await page.locator("div ::-p-text(View story)").click();
 
-    return NextResponse.json({ audioUrl, videoUrl });
+    await delay(500); // Wait for 1 second to capture initial responses
+
+    // Match video and audio URLs based on _nc_gid
+    const allUrls = [];
+
+    // Loop through the total number of stories
+    for (let i = 0; i < storiesCount; i++) {
+        const storyContainerClassName =
+            "div.x6s0dn4.x1lq5wgf.xgqcy7u.x30kzoy.x9jhf4c.x78zum5.xdt5ytf.x5yr21d.xl56j7k.x6ikm8r.x10wlt62.x1n2onr6.xh8yej3 img";
+        const hasImage = await page.$(storyContainerClassName);
+
+        // Push if story is an image
+        if (hasImage) {
+            const imageSrc = await page.evaluate((el) => el.src, hasImage);
+            allUrls.push({ type: "img", url: imageSrc });
+        }
+
+        await page.keyboard.press("ArrowRight");
+        await delay(500); // Wait after each slide transition for the requests to be made
+    }
+
+    await delay(2000); // Wait for 2 seconds to ensure all network requests are captured
+
+    videoUrls.forEach((videoUrl, gid) => {
+        const matchingAudioUrl = audioUrls.get(gid); // Find matching audioUrl by _nc_gid
+
+        if (matchingAudioUrl) {
+            allUrls.push({
+                type: "video",
+                videoUrl,
+                audioUrl: matchingAudioUrl,
+            });
+        }
+    });
+
+    // Close the browser once done
+    page.close();
+    browser.close();
+
+    // Return matched URL pairs as JSON response
+    return NextResponse.json(allUrls);
 };
+
+// Utility function to extract _nc_gid from the URL
+function extractGid(url) {
+    const match = url.match(/_nc_gid=([^&]+)/);
+    return match ? match[1] : null;
+}
