@@ -38,7 +38,7 @@ export default function StoryThumbnails({ stories }) {
                         />
                     ) : (
                         <video
-                            src={story.videoUrl.replace(
+                            src={story.videoUrl?.replace(
                                 /&bytestart=\d+&byteend=\d+/,
                                 ""
                             )}

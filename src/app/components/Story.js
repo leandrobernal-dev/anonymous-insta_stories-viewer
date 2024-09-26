@@ -81,7 +81,7 @@ export default function StoryModal({
                     <>
                         <video
                             ref={videoRef}
-                            src={currentStory.videoUrl.replace(
+                            src={currentStory.videoUrl?.replace(
                                 /&bytestart=\d+&byteend=\d+/,
                                 ""
                             )}
@@ -93,7 +93,7 @@ export default function StoryModal({
                         {currentStory.type === "video" && (
                             <audio
                                 ref={audioRef}
-                                src={currentStory.audioUrl.replace(
+                                src={currentStory.audioUrl?.replace(
                                     /&bytestart=\d+&byteend=\d+/,
                                     ""
                                 )}
