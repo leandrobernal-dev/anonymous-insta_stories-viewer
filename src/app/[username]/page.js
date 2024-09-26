@@ -96,15 +96,13 @@ export default function Home({ params }) {
     }, [stringData]);
 
     useEffect(() => {
-        if (profileData === null || profileData.isPrivate) return;
-
         axios.get(`/api/${params.username}/stories`).then((data) => {
             console.log(data.data);
 
             setIsLoadingStories(false);
             setStories(data.data);
         });
-    }, [profileData]);
+    }, []);
 
     return (
         <main className="">
