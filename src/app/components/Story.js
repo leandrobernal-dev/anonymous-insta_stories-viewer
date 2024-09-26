@@ -4,13 +4,16 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import Image from "next/image";
 
-export default function StoryModal({ stories, initialIndex, isOpen, onClose }) {
-    const [currentIndex, setCurrentIndex] = useState(initialIndex);
-    const [isPlaying, setIsPlaying] = useState(true);
+export default function StoryModal({
+    stories,
+    isOpen,
+    onClose,
+    currentStory,
+    setCurrentStory,
+}) {
+    const [isPlaying, setIsPlaying] = useState(false);
     const videoRef = useRef(null);
     const audioRef = useRef(null);
-
-    const currentStory = stories[currentIndex];
 
     useEffect(() => {
         if (
@@ -23,18 +26,24 @@ export default function StoryModal({ stories, initialIndex, isOpen, onClose }) {
                 audioRef.current?.play();
             }
         }
-    }, [isOpen, currentIndex, currentStory.type]);
+    }, [isOpen, currentStory]);
 
     const handlePrevious = () => {
-        if (currentIndex > 0) {
-            setCurrentIndex(currentIndex - 1);
+        if (currentStory.index > 0) {
+            setCurrentStory({
+                ...stories[currentStory.index - 1],
+                index: currentStory.index - 1,
+            });
             setIsPlaying(true);
         }
     };
 
     const handleNext = () => {
-        if (currentIndex < stories.length - 1) {
-            setCurrentIndex(currentIndex + 1);
+        if (currentStory.index < stories.length - 1) {
+            setCurrentStory({
+                ...stories[currentStory.index + 1],
+                index: currentStory.index + 1,
+            });
             setIsPlaying(true);
         } else {
             onClose();
@@ -98,7 +107,7 @@ export default function StoryModal({ stories, initialIndex, isOpen, onClose }) {
                         variant="ghost"
                         size="icon"
                         onClick={handlePrevious}
-                        disabled={currentIndex === 0}
+                        disabled={currentStory.index === 0}
                         className="text-white hover:bg-zinc-800/50"
                     >
                         <ChevronLeft className="h-8 w-8" />

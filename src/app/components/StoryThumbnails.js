@@ -5,14 +5,13 @@ import React, { useState } from "react";
 
 export default function StoryThumbnails({ stories }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedIndex, setSelectedIndex] = useState(0);
+    const [currentStory, setCurrentStory] = useState(stories[0]);
 
     const openModal = (index) => {
-        setSelectedIndex(index);
+        setCurrentStory({ ...stories[index], index: index });
         setIsModalOpen(true);
     };
     const closeModal = () => {
-        setSelectedIndex(0);
         setIsModalOpen(false);
     };
 
@@ -51,9 +50,10 @@ export default function StoryThumbnails({ stories }) {
             {stories.length > 0 && (
                 <StoryModal
                     stories={stories}
-                    initialIndex={selectedIndex}
                     isOpen={isModalOpen}
                     onClose={closeModal}
+                    currentStory={currentStory}
+                    setCurrentStory={setCurrentStory}
                 />
             )}
         </div>
