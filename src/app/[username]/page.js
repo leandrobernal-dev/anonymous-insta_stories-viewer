@@ -117,7 +117,7 @@ export default function Home({ params }) {
                             <ProfileSkeleton />
                         )}
 
-                        <Separator className="mt-8" />
+                        <Separator className="my-8" />
                         {profileData?.isPrivate ? (
                             <PrivateAccountNotice />
                         ) : (
