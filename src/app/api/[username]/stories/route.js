@@ -152,7 +152,7 @@ export const GET = async (request, context) => {
         await delay(500); // Wait after each slide transition for the requests to be made
     }
 
-    await delay(storiesCount * 500); // Wait for .5 seconds per story to ensure all network requests are captured
+    await delay(storiesCount * 1000); // Wait for 1 second per story to ensure all network requests are captured
 
     videoUrls.forEach((videoUrl, gid) => {
         const matchingAudioUrl = audioUrls.get(gid); // Find matching audioUrl by _nc_gid
