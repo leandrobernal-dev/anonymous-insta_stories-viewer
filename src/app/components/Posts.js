@@ -3,7 +3,7 @@ import StoryThumbnails from "@/app/components/StoryThumbnails";
 
 export default function Posts({ stories, isLoadingStories }) {
     return (
-        <div className="w-full max-w-3xl mx-auto  mb-8 text-zinc-100">
+        <div className=" mb-8 text-zinc-100">
             {isLoadingStories ? (
                 <LoadingPosts />
             ) : stories.length === 0 ? (
