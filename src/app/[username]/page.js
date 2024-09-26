@@ -41,7 +41,6 @@ export default function Home({ params }) {
         // Dynamically insert the header HTML and query within it
         const tempDiv = document.createElement("div");
         tempDiv.innerHTML = stringData;
-        console.log(tempDiv);
 
         const isPrivate = !![...tempDiv.querySelectorAll("span")].find((span) =>
             span.textContent.includes("This account is private")
