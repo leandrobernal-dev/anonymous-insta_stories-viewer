@@ -50,6 +50,31 @@ export const GET = async (request, context) => {
     await page.setCookie(...savedCookies);
     const savedLocalStorageData = browserData[0].local_storages;
 
+    const videoUrls = new Map(); // Use a Map to ensure unique _nc_gid for videos
+    const audioUrls = new Map(); // Use a Map to ensure unique _nc_gid for audios
+
+    // Listen for all responses
+    page.on("response", async (response) => {
+        const url = response.url();
+        const gid = extractGid(url); // Extract the _nc_gid
+
+        if (gid) {
+            if (url.startsWith("https://scontent.cdninstagram.com/v/t66")) {
+                // Check if _nc_gid is already present
+                if (!videoUrls.has(gid)) {
+                    videoUrls.set(gid, url); // Add unique video URL by _nc_gid
+                }
+            } else if (
+                url.startsWith("https://scontent.cdninstagram.com/v/t50")
+            ) {
+                // Check if _nc_gid is already present
+                if (!audioUrls.has(gid)) {
+                    audioUrls.set(gid, url); // Add unique audio URL by _nc_gid
+                }
+            }
+        }
+    });
+
     // Navigate to stories
     await page.goto(instaStoriesUrl);
 
@@ -96,50 +121,17 @@ export const GET = async (request, context) => {
 
     console.log("logged in.");
 
-    // Intercept network requests to find the actual media (video/image) URLs
-    await page.setRequestInterception(true);
-    // Listen for all network requests
-    page.on("request", (request) => {
-        request.continue(); // Let the request proceed
-    });
-
     const storiesCount = await page.evaluate(() => {
-        return document.querySelector(".x1ned7t2.x78zum5").children.length;
+        const element = document.querySelector(".x1ned7t2.x78zum5");
+        return element ? element.children.length : null;
     });
 
-    const videoUrls = new Map(); // Use a Map to ensure unique _nc_gid for videos
-    const audioUrls = new Map(); // Use a Map to ensure unique _nc_gid for audios
-
-    // Listen for all responses
-    page.on("response", async (response) => {
-        const url = response.url();
-        const gid = extractGid(url); // Extract the _nc_gid
-
-        if (gid) {
-            if (url.startsWith("https://scontent.cdninstagram.com/v/t66")) {
-                // Check if _nc_gid is already present
-                if (!videoUrls.has(gid)) {
-                    console.log(url);
-
-                    videoUrls.set(gid, url); // Add unique video URL by _nc_gid
-                }
-            } else if (
-                url.startsWith("https://scontent.cdninstagram.com/v/t50")
-            ) {
-                // Check if _nc_gid is already present
-                if (!audioUrls.has(gid)) {
-                    console.log(url);
-
-                    audioUrls.set(gid, url); // Add unique audio URL by _nc_gid
-                }
-            }
-        }
-    });
+    if (!storiesCount) {
+        return NextResponse.json([], { status: 200 });
+    }
 
     // Click View Story Button
     await page.locator("div ::-p-text(View story)").click();
-
-    await delay(500); // Wait for 1 second to capture initial responses
 
     // Match video and audio URLs based on _nc_gid
     const allUrls = [];
@@ -160,18 +152,16 @@ export const GET = async (request, context) => {
         await delay(500); // Wait after each slide transition for the requests to be made
     }
 
-    await delay(2000); // Wait for 2 seconds to ensure all network requests are captured
+    await delay(storiesCount * 500); // Wait for .5 seconds per story to ensure all network requests are captured
 
     videoUrls.forEach((videoUrl, gid) => {
         const matchingAudioUrl = audioUrls.get(gid); // Find matching audioUrl by _nc_gid
 
-        if (matchingAudioUrl) {
-            allUrls.push({
-                type: "video",
-                videoUrl,
-                audioUrl: matchingAudioUrl,
-            });
-        }
+        allUrls.push({
+            type: "video",
+            videoUrl,
+            audioUrl: matchingAudioUrl ? matchingAudioUrl : null,
+        });
     });
 
     // Close the browser once done
