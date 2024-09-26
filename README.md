@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Instagram Anonymous Story Viewer
 
-## Getting Started
+This project is a Next.js web application that allows users to view Instagram stories anonymously.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- View Instagram stories anonymously
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## How to use
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+1. Go to the website and enter the username of the account you want to view stories from
+2. Click on the "View Stories" button
+3. Wait for the stories to load
+4. Click on a story to view it
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Limitations
 
-## Learn More
+- You can only view stories from public accounts
+- The app does not support viewing stories from private accounts
+- The app does not support viewing stories from accounts with private stories
+- The current scraping method I am able to use is not reliable for fetching video stories, and may not work as expected.
+- This app is hosted on vercel and may have performance issues due to hosting limits.
 
-To learn more about Next.js, take a look at the following resources:
+## Development
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Clone the repository
+- Install the dependencies with `npm install`
+- Start the development server with `npm run dev`
+- Open `http://localhost:3000` in your browser
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- Build the app with `npm run build`
+- Deploy the app to a server or hosting platform of your choice
