@@ -1,4 +1,5 @@
 import StoryModal from "@/app/components/Story";
+import { PlayCircle } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
 
@@ -16,13 +17,16 @@ export default function StoryThumbnails({ stories }) {
     };
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
             {stories.map((story, index) => (
                 <div
                     key={index}
-                    className="w-full aspect-[9/16] cursor-pointer "
+                    className="w-full relative aspect-[9/16] cursor-pointer shadow-lg rounded-lg"
                     onClick={() => openModal(index)}
                 >
+                    <div className="absolute flex justify-center items-center top-0 rounded-lg left-0 w-full h-full bg-black/20">
+                        <PlayCircle className="h-16 w-16 text-white" />
+                    </div>
                     {story.type === "image" ? (
                         <Image
                             width={300}
