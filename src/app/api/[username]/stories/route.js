@@ -145,7 +145,7 @@ export const GET = async (request, context) => {
         // Push if story is an image
         if (hasImage) {
             const imageSrc = await page.evaluate((el) => el.src, hasImage);
-            allUrls.push({ type: "img", url: imageSrc });
+            allUrls.push({ type: "image", url: imageSrc });
         }
 
         await page.keyboard.press("ArrowRight");
