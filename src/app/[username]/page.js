@@ -62,7 +62,7 @@ export default function Home({ params }) {
             )?.textContent || "";
 
         const description = tempDiv.querySelector(
-            "header > section > div > span > div"
+            "header > :nth-child(4) > div > span > div"
         );
         const descriptionHtml = description ? description.innerHTML : "";
 
